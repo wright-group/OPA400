@@ -80,7 +80,7 @@ translate([motor_mount_x, width/4, platform_height])
 }
 // DE-9 connector housing
 module de_9_housing(){
-translate([1.125*inch, 0, 0.25*inch])
+translate([1.125*inch, 0, platform_height])
     difference(){
         union(){
             cube([40, 14.5, 20]);

@@ -15,7 +15,7 @@ module external_parts()
     
     // Adapter for flex coupler to thumbscrew
     translate([147-stage_length, width/2, center_axis]) rotate([0,-90,0]){
-        include <machined_parts/TL_stage_NEMA_11_adapter.scad>;
+//        include <machined_parts/TL_stage_NEMA_11_adapter.scad>;
     }
     
     // Flexible coupler
@@ -38,7 +38,7 @@ module external_parts()
     // Mirror mount adapter
     translate([-2*inch, 3.5*inch, total_height]) rotate([0, 0, 180]) {
         include <machined_parts/Mirror_mount_pad.scad>;
-            mirrors = "newport";
+            mirrors = "thorlabs";
     if (mirrors == "newport"){
         translate([1.5*inch, 3*inch, 29])
         rotate([0,0,180-45]) translate([-96, -128.5, -128]) #import("purchased_parts/Newport_ultima.stl");
