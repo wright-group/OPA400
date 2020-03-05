@@ -2,12 +2,12 @@ inch=25.4;
 
 extrusion_width = 14.9;
 length = 5*inch;
-height = 4.5*inch;
+height = 100;
 width=10*inch;
 base_height = 0.125*inch;
 wall_thickness = 3;
-through_4_40 = 3.45;
-through_3_mm = 3.1;
+through_4_40 = 3.26;
+through_3_mm = 3.4;
 $fn=100;
 
 module extrusion_shape()
@@ -47,7 +47,7 @@ module baseplate()
         for (x=[extrusion_width/2, length-extrusion_width/2])
             for(y=[extrusion_width/2, width-extrusion_width/2])
                 translate([x,y])
-                cylinder(d=through_4_40, h=base_height*3, center=true);
+                cylinder(d=through_3_mm, h=base_height*3, center=true);
             
         // Power supplies
         for(y=[2.5:1.5:6.5])
@@ -72,35 +72,24 @@ module frame(){
                 echo ("Extrusion: ", height, "mm =", height/inch, " inch");
                 linear_extrude(height)extrusion_shape();
         }
-        
-        translate([x,extrusion_width, height+extrusion_width]){
-            rotate([-90, 0, 0])
-            {
-                dist = width-2*extrusion_width;
-                linear_extrude(dist)extrusion_shape();
-                echo ("Extrusion: ", dist, "mm = ", dist/inch, "inch");
-            }
-        }
-    }
-    for (y=[0, width-extrusion_width]){
-        translate([extrusion_width,y, height+extrusion_width]){
-            rotate([0, 90, 0])
-            {
-                dist = length-2*extrusion_width;
-                linear_extrude(dist)extrusion_shape();
-             echo ("Extrusion: ", dist, "mm = ", dist/inch, "inch");
-            }
-        }
     }
 }
 
 module clear_panels(){
     color("#ffffff22"){
         for (x=[extrusion_width/2, length-extrusion_width/2])
-            translate([x, width/2, height/2+base_height-1])
-                cube([wall_thickness, width-extrusion_width-6, height+4], center=true);
-        translate([length/2, width/2, height+extrusion_width/2])
-            cube([length-extrusion_width-6, width-extrusion_width-6, wall_thickness], center=true);
+            translate([x, width/2, height/2]);
+                //cube([wall_thickness, width-extrusion_width-6, height], center=true);
+        translate([length/2, width/2, height+wall_thickness/2])
+        {
+            difference(){
+            cube([length, width, wall_thickness], center=true);
+                for (x=[-length/2 + extrusion_width/2, length/2 - extrusion_width/2])
+                    for(y=[-width/2 + extrusion_width/2, width/2 - extrusion_width/2])
+                        translate([x,y])
+                        cylinder(d=through_3_mm, h=wall_thickness*2, center=true);
+            }
+        }
     }
 }
 
@@ -130,22 +119,19 @@ module dsub_housing(width=19){
 
 module front_panel(){
     color("#0000cc"){
-        translate([length/2, extrusion_width/2, height/2+base_height-1])
+        translate([length/2, extrusion_width/2, height/2])
             difference(){
                 union(){
-                cube([length-extrusion_width-6, wall_thickness, height+4], center=true);
+                cube([length-extrusion_width-6, wall_thickness, height], center=true);
                     // pad wall thickness where connectors are
                     translate([0, wall_thickness, 5])
-                     cube([length-2*inch, wall_thickness*2, height-2*inch], center=true);
+                     cube([length-2*inch, wall_thickness*2, height-1.5*inch], center=true);
                 }
-                // Corners nibbled away
-                for(x=[-length/2+extrusion_width/2, length/2-extrusion_width/2])
-                    translate([x, 0, height/2]) cube([15,5,5], center=true);
                 //raspberry pi opening
                 translate([0, 0, -height/2])
                 
                 minkowski(){
-                cube([50, 4, 40],center=true);
+                cube([50, 4, 44],center=true);
                 rotate([90, 0, 0]) cylinder(r=2, h=wall_thickness*2, center=true);
                 }
                 
@@ -159,13 +145,13 @@ module front_panel(){
 }
 
 module back_panel(){
-    color("#0000cc77"){
-        translate([length/2, width - extrusion_width/2, height/2+base_height-1])
+    translate([length/2, width - extrusion_width/2, height/2])
+    {
+        
+        color("#0000cc"){
             difference(){
-                cube([length-extrusion_width-6, wall_thickness, height+4], center=true);
-                // Corners nibbled away
-                for(x=[-length/2+extrusion_width/2, length/2-extrusion_width/2])
-                    translate([x, 0, height/2]) cube([15,5,5], center=true);
+                cube([length-extrusion_width-6, wall_thickness, height], center=true);
+               
                 // Power entry
                 translate([-length/2 + 40, 0, -height/2+20])
                 {
@@ -179,6 +165,14 @@ module back_panel(){
                     cube([22, wall_thickness*2, 30], center=true);
                 }
             }
+        }
+            translate([40, wall_thickness/2, -height/4])
+            rotate([90, 0, 180])
+            linear_extrude(wall_thickness/2, center=true)
+            
+            scale(0.5)
+            import("Group Logo.dxf", convexity=5);
+        
     }
 }
 
@@ -188,7 +182,6 @@ module power_supply(){
         cube([13, 10, 40]);
 }
 
-color("grey")
 for(dist=[2.5:1.5:6.5])
 translate([length/2-0.5*inch, width-dist*inch, 0])
 #power_supply();
@@ -204,6 +197,7 @@ for (y=[0.5: 0.625: 3])
 }
 
 frame();
-//clear_panels();
 front_panel();
 back_panel();
+
+clear_panels();
