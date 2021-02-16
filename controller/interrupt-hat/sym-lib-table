@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name rpi-headers)(type Legacy)(uri ${KIPRJMOD}/symbols/rpi-headers.lib)(options "")(descr ""))
+  (lib (name interrupt-hat-rescue)(type Legacy)(uri ${KIPRJMOD}/interrupt-hat-rescue.lib)(options "")(descr ""))
+)
