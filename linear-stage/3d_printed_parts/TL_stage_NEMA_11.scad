@@ -4,7 +4,7 @@ inch = 25.4;
 PREVIEW_OTHER_PARTS = false;
 $fn=100;
 // length of platform
-length = 4*inch;
+length = 3.1*inch;
 stage_length = 4 * inch;
 width = 3*inch;
 platform_height = 5;
@@ -24,7 +24,7 @@ difference(){
 union(){
     platform();
     de_9_housing();
-    nema_11_mount();
+    //nema_11_mount();
     optical_interrupt_mount();
     if (PREVIEW_OTHER_PARTS) external_parts();
 }
@@ -32,13 +32,20 @@ union(){
 }
 
 module platform(){
+    translate([0, -1* inch, 0])
     difference(){
         // Base Platform
         cube([length, width, platform_height]);
         for (y=[.5,width/inch -0.5]){
+            hull()
             for(x=[.5,floor(length/inch) - 0.5]){
                 translate([x*inch,y*inch, .125*inch]) union(){
                     cylinder(r=quarter20_through, h=inch, center=true);
+                }
+            }
+            hull()
+            for(x=[.5,floor(length/inch) - 0.5]){
+                translate([x*inch,y*inch, .125*inch]) union(){
                     cylinder(r=quarter20_counterbore, h=20);
                 }
             }
@@ -80,14 +87,17 @@ translate([motor_mount_x, width/4, platform_height])
 }
 // DE-9 connector housing
 module de_9_housing(){
-translate([1.125*inch, 0, platform_height])
+translate([27.5, 18, platform_height])
+    mirror([0, 1, 0])
     difference(){
         union(){
             cube([40, 14.5, 20]);
             fillet_box(40, 14.5, 5);
+            translate([-5,-5,-platform_height])
+            cube([50, 24.5, platform_height]);
         }
-        translate([20,-5,0])
-            cube([80, 10, 10], center=true);
+        translate([20,0,20])
+            cube([2, 40, 10], center=true);
         translate([20,0, 10])
         union(){
             rotate([90, 0, 0])
@@ -113,7 +123,7 @@ translate([1.125*inch, 0, platform_height])
 }
 // Optical interrupt bracket
 module optical_interrupt_mount(){
-translate([0.5*inch, width, 0])
+translate([0.5*inch, 10, 0])
     difference(){
         union(){
             xsize=15;
@@ -121,7 +131,7 @@ translate([0.5*inch, width, 0])
             cube([xsize, ysize, total_height + 24]);
             
             // Strain relief fillets
-            translate([xsize/2, 0, platform_height]) rotate([90, 0,-90]) fillet(length=xsize);
+            translate([0, 0, platform_height]) fillet_box(xsize, ysize, 5);
             translate([0, 0, platform_height/2]) rotate([0, 0,90]) fillet(size=ysize, length=platform_height);
             translate([xsize, 0, platform_height/2]) rotate([0, 0,0]) fillet(size=ysize, length=platform_height);
         }

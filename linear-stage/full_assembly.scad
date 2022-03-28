@@ -31,7 +31,7 @@ module external_parts()
     }
     
     // Optical interrupt OMRON SX3009
-    #translate([0.5*inch+2, width-8, total_height-13]){
+    #translate([0.5*inch+2, width+1, total_height-13]){
         cube([11,8,34]);
         for (z=[6,16.25]) translate([0,-10.6,z]) cube([7, 10.6, 4.75]);
     }
@@ -55,5 +55,6 @@ module external_parts()
 }
 }
 
+translate([0, -3*inch, 0])
 external_parts();
 
